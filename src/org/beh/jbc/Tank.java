@@ -16,17 +16,17 @@ public class Tank extends Sprite {
 	
 	public static final int DELAY_BORN = 4;
 	public static final int DELAY_DYING = 6;
+	public static final int DELAY_MOVING = 1;
 	
 	protected int status;
 	protected int type; //敌方4种，我方两种
 	protected int life; //还能被打几下（颜色不同）
 	protected int power; //0: 普通；1: 加速；2:双弹；3: 拆铁墙；4: 烧草
 	protected boolean hasItem; //显示为红色
-	protected int frame; //动画帧数
-	protected int subFrame; //动画帧数
 	protected int invincibleLeft; //无敌剩余时间
 	protected int suspendLeft; //暂停剩余时间（我方坦克被自己人打了，时间独立计算）
 	protected boolean hasBoat; //是否可以水上移动
+	protected Stage stage; //所在战场
 	
 	public Tank(){
 		init(TANK_1P);
@@ -118,12 +118,15 @@ public class Tank extends Sprite {
 		return color;
 	}
 	
+	public boolean hasBoat() {
+		return this.hasBoat;
+	}
+	
 	public int getStatus() {
 		return status;
 	}
 	
 	public int getFrame() {
-		// TODO Auto-generated method stub
 		return frame;
 	}
 	
@@ -152,5 +155,56 @@ public class Tank extends Sprite {
 	}
 	
 	public void doDead(){
+		//检查掉落
 	}
+	
+	public void doMoving(){
+		subFrame++;
+		if (subFrame>DELAY_MOVING){
+			frame++;
+			subFrame=0;
+		}
+		if (frame>8){
+			frame=0;
+			status=STATUS_READY;
+			sPosX=sNextX;
+			sPosY=sNextY;
+		}
+	}
+	
+	public boolean move(int aspect){
+		if (status!=STATUS_READY) return false;
+		//当移动方向不同于当前面朝方向时
+		if (this.aspect != aspect){
+			this.aspect = aspect;
+			return true;
+		}
+		//如果前方无路可走，那么返回失败
+		int nextX=sPosX, nextY=sPosY;
+		switch (aspect){
+		case Sprite.ASPECT_UP:
+			nextY=sPosY-1;
+			break;
+		case Sprite.ASPECT_RIGHT:
+			nextX=sPosX+1;
+			break;
+		case Sprite.ASPECT_DOWN:
+			nextY=sPosY+1;
+			break;
+		case Sprite.ASPECT_LEFT:
+			nextX=sPosX-1;
+			break;
+		}
+		if (stage.checkPoint(nextX,nextY,hasBoat)){
+			sNextX = nextX;
+			sNextY = nextY;
+		}
+		status=STATUS_MOVING;
+		return true;
+	}
+	
+	public void intoStage(Stage stage){
+		this.stage = stage;
+	}
+	
 }

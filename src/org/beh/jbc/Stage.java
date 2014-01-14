@@ -11,6 +11,7 @@ public class Stage {
 	protected List<Bullet> bullets;
 	protected List<Tank> enemyLeft;
 	protected boolean baseAlive;
+	protected IVisualStage ui;
 	
 	public Stage(){
 		init();
@@ -52,6 +53,7 @@ public class Stage {
 		int x, y;
 		for (y=0; y<STAGE_SIZE_Y; y++){
 			for (x=0; x<STAGE_SIZE_X; x++){
+				if (tiles[x][y]<10) value += "0";
 				value += tiles[x][y]+" ";
 			}
 			value += "\n";
@@ -81,6 +83,7 @@ public class Stage {
 		return aliveTanks;
 	}
 	
+	@Deprecated
 	public void addTank(Tank tank){
 		aliveTanks.add(tank);
 	}
@@ -114,6 +117,7 @@ public class Stage {
 			break;
 		}
 		aliveTanks.add(tank);
+		tank.intoStage(this);
 	}
 	
 	public boolean isBaseAlive(){
@@ -125,6 +129,7 @@ public class Stage {
 	 */
 	public void handle(){
 		for (Tank tank:aliveTanks){
+			tank.move(0); //Ç¿ÐÐUÒÆ¶¯
 			switch (tank.getStatus()){
 			case Tank.STATUS_BORN:
 				tank.doBorn();
@@ -133,6 +138,7 @@ public class Stage {
 				tank.doDying();
 				break;
 			case Tank.STATUS_MOVING:
+				tank.doMoving();
 				break;
 			case Tank.STATUS_READY:
 			case Tank.STATUS_DEAD:
@@ -141,6 +147,10 @@ public class Stage {
 			default:
 			}
 		}
+	}
+	
+	public void registerUI(IVisualStage ivs) {
+		ui = ivs;
 	}
 	
 	/**
@@ -155,4 +165,11 @@ public class Stage {
 		stage.addTank(tank);
 		System.out.println(stage);
 	}
+
+	public boolean checkPoint(int nextX, int nextY, boolean hasBoat) {
+		if (nextX<0 || nextX>=STAGE_SIZE_X || nextY<0 || nextY>=STAGE_SIZE_Y)
+			return false;
+		return true;
+	}
+
 }

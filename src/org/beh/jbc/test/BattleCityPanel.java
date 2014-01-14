@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 
 import org.beh.jbc.CityMap;
 import org.beh.jbc.IVisualStage;
+import org.beh.jbc.Sprite;
 import org.beh.jbc.Stage;
 import org.beh.jbc.Tank;
 
@@ -41,6 +42,7 @@ public class BattleCityPanel extends JPanel implements IVisualStage {
 	private Image[] item[];
 	private Image[] animaBorn;
 	private Image[] animaDie;
+	private Image[] imgBoat;
 	
 	/**
 	 * Create the panel.
@@ -119,6 +121,9 @@ public class BattleCityPanel extends JPanel implements IVisualStage {
 				//TODO ¡Ÿ ±Œª÷√
 				animaDie[x]=imageAll.getSubimage(192+x*16, 176, 16, 16);
 			}
+			imgBoat = new Image[2];
+			imgBoat[0] = imageAll.getSubimage(480, 16, 16, 16);
+			imgBoat[1] = imageAll.getSubimage(496, 16, 16, 16);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -126,6 +131,7 @@ public class BattleCityPanel extends JPanel implements IVisualStage {
 	
 	public void setStage(Stage stage) {
 		this.stage=stage;
+		stage.registerUI(this);
 	}
 	
 	public Image getTankImage(Tank tank){
@@ -159,6 +165,11 @@ public class BattleCityPanel extends JPanel implements IVisualStage {
 		}
 		else if (status==Tank.STATUS_READY){
 			return tanks[tank.getType()][tank.getColor()][tank.getAspect()][0];
+		}
+		else if (status==Tank.STATUS_MOVING){
+			int frameId=tank.getFrame();
+			int frame = frameId%2;
+			return tanks[tank.getType()][tank.getColor()][tank.getAspect()][frame];
 		}
 		else if (status==Tank.STATUS_DYING){
 			int frame=tank.getFrame();
@@ -207,7 +218,40 @@ public class BattleCityPanel extends JPanel implements IVisualStage {
 		for (Tank tank : aliveTanks){
 			Image tankImage = getTankImage(tank);
 			if (tankImage != null) {
-				g.drawImage(tankImage, STAGE_AREA_X*TILE_SIZE+tank.getTileX()*TILE_SIZE, STAGE_AREA_X*TILE_SIZE+tank.getTileY()*TILE_SIZE, this);
+				int pid = tank.getColor();
+				//int  distanceX = Math.abs(tank.getNextX()-tank.getTileX()) * TILE_SIZE,
+				//	 distanceY = Math.abs(tank.getNextY()-tank.getTileY()) * TILE_SIZE;
+				int offsetX=0, offsetY=0;
+				if (tank.getStatus()==Tank.STATUS_MOVING){
+					switch (tank.getAspect()){
+					case Sprite.ASPECT_UP:
+						offsetY = -1*tank.getFrame();
+						break;
+					case Sprite.ASPECT_RIGHT:
+						offsetX = +1*tank.getFrame();
+						break;
+					case Sprite.ASPECT_DOWN:
+						offsetY = +1*tank.getFrame();
+						break;
+					case Sprite.ASPECT_LEFT:
+						offsetX = -1*tank.getFrame();
+						break;
+					}
+				}
+				if (tank.hasBoat() && (pid==0 || pid==1) ){
+					g.drawImage(
+						imgBoat[pid], 
+						STAGE_AREA_X*TILE_SIZE+tank.getTileX()*TILE_SIZE+offsetX, 
+						STAGE_AREA_X*TILE_SIZE+tank.getTileY()*TILE_SIZE+offsetY, 
+						this
+					);
+				}
+				g.drawImage(
+					tankImage, 
+					STAGE_AREA_X*TILE_SIZE+tank.getTileX()*TILE_SIZE+offsetX, 
+					STAGE_AREA_X*TILE_SIZE+tank.getTileY()*TILE_SIZE+offsetY, 
+					this
+				);
 			}
 		}
 		//ªÊ÷∆≤›¥‘£®∏≤∏«ÃπøÀ≤„£©

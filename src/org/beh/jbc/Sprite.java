@@ -8,16 +8,31 @@ public class Sprite {
 	
 	protected int sPosX; //精灵坐标x
 	protected int sPosY; //精灵坐标y
+	
+	protected int sNextX;
+	protected int sNextY; //下个位置的坐标
+	
 	protected int size; //碰撞体积
 	
 	protected int aspect; //移动方向
 	
+	protected int frame; //动画帧数
+	protected int subFrame; //动画帧数
+	
 	public int getTileX(){
-		return sPosX;//-size/2
+		return sPosX;
 	}
 	
 	public int getTileY(){
-		return sPosY;//-size/2
+		return sPosY;
+	}
+	
+	public int getNextX(){
+		return sNextX;
+	}
+	
+	public int getNextY(){
+		return sNextY;
 	}
 	
 	public int getAspect() {
