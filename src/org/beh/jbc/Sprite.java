@@ -13,9 +13,9 @@ public class Sprite {
 	protected int aspect; //ÒÆ¶¯·½Ïò
 	
 	public int getTileX(){
-		return sPosX;
+		return sPosX;//-size/2
 	}
 	public int getTileY(){
-		return sPosY-size/2;
+		return sPosY;//-size/2
 	}
 }

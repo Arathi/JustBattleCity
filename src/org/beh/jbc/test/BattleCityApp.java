@@ -39,8 +39,16 @@ public class BattleCityApp {
 	public BattleCityApp() {
 		stage = new Stage();
 		stage.loadFromCityMap(new CityMap());
-		Tank tank=new Tank();
-		stage.addTank(tank);
+		Tank tank1P=new Tank(Tank.TANK_1P);
+		Tank tank2P=new Tank(Tank.TANK_2P);
+		Tank tankE1=new Tank(Tank.TANK_E1);
+		Tank tankE2=new Tank(Tank.TANK_E2);
+		Tank tankE4=new Tank(Tank.TANK_E4);
+		stage.addTank(tank1P);
+		stage.addTank(tank2P);
+		stage.addTank(tankE1,0);
+		stage.addTank(tankE2,1);
+		stage.addTank(tankE4,2);
 		initialize();
 	}
 

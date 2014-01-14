@@ -24,6 +24,10 @@ public class BattleCityPanel extends JPanel implements IVisualStage {
 	public static final int STAGE_AREA_X = 2;
 	public static final int STAGE_AREA_Y = 2;
 	public static final int TILE_SIZE = 8;
+
+	public static final int COLOR_YELLOW = 0;
+	public static final int COLOR_GREEN = 1;
+	public static final int COLOR_RED = 2;
 	
 	private Stage stage;
 	private BufferedImage imageAll;
@@ -71,14 +75,15 @@ public class BattleCityPanel extends JPanel implements IVisualStage {
 			imageAll=ImageIO.read( ClassLoader.getSystemResourceAsStream("battlecity.png") );
 			//分离出坦克贴图
 			tanks = new Image[4][7][4][2];
-			int type, aspect, frame, power, x, y;
+			int type, aspect, frame, color, x, y;
 			for (y=0; y<8; y++){
 				frame = y%2;
-				power = y/2;
+				type = y/2;
 				for (x=0; x<4*7; x++){
 					aspect = x%4;
-					type = x/7;
-					tanks[type][power][aspect][frame] = imageAll.getSubimage(16*x,16*y,16,16);
+					color = x/4;
+					System.out.println("x="+x+",y="+y+": color="+color);
+					tanks[type][color][aspect][frame] = imageAll.getSubimage(16*x,16*y,16,16);
 				}
 			}
 			//分离出字库
@@ -125,6 +130,8 @@ public class BattleCityPanel extends JPanel implements IVisualStage {
 		}
 		List<Tank> aliveTanks = stage.getAliveTanks();
 		for (Tank tank : aliveTanks){
+			System.out.println("Type="+tank.getType());
+			System.out.println("Color="+tank.getColor());
 			g.drawImage(tanks[tank.getType()][tank.getColor()][tank.getAspect()][0], STAGE_AREA_X*TILE_SIZE+tank.getTileX()*TILE_SIZE, STAGE_AREA_X*TILE_SIZE+tank.getTileY()*TILE_SIZE, this);
 		}
 	}

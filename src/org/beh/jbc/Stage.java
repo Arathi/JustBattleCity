@@ -83,6 +83,37 @@ public class Stage {
 		aliveTanks.add(tank);
 	}
 	
+	public void addTank(Tank tank, int startPoint){
+		switch (startPoint){
+		case 0:
+			tank.sPosX=0;
+			tank.sPosY=0;
+			tank.aspect=Sprite.ASPECT_DOWN;
+			break;
+		case 1:
+			tank.sPosX=12;
+			tank.sPosY=0;
+			tank.aspect=Sprite.ASPECT_DOWN;
+			break;
+		case 2:
+			tank.sPosX=24;
+			tank.sPosY=0;
+			tank.aspect=Sprite.ASPECT_DOWN;
+			break;
+		case 3:
+			tank.sPosX=8;
+			tank.sPosY=24;
+			tank.aspect=Sprite.ASPECT_UP;
+			break;
+		case 4:
+			tank.sPosX=16;
+			tank.sPosY=24;
+			tank.aspect=Sprite.ASPECT_UP;
+			break;
+		}
+		aliveTanks.add(tank);
+	}
+	
 	/**
 	 * µ¥Ôª²âÊÔÇý¶¯
 	 * @param args
