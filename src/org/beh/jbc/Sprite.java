@@ -15,7 +15,12 @@ public class Sprite {
 	public int getTileX(){
 		return sPosX;//-size/2
 	}
+	
 	public int getTileY(){
 		return sPosY;//-size/2
+	}
+	
+	public int getAspect() {
+		return aspect;
 	}
 }

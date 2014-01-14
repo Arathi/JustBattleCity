@@ -10,6 +10,7 @@ public class Stage {
 	protected List<Tank> aliveTanks;
 	protected List<Bullet> bullets;
 	protected List<Tank> enemyLeft;
+	protected boolean baseAlive;
 	
 	public Stage(){
 		init();
@@ -23,6 +24,7 @@ public class Stage {
 		aliveTanks = new ArrayList<Tank>();
 		bullets = new ArrayList<Bullet>();
 		enemyLeft = new ArrayList<Tank>();
+		baseAlive = true;
 	}
 	
 	/**
@@ -112,6 +114,33 @@ public class Stage {
 			break;
 		}
 		aliveTanks.add(tank);
+	}
+	
+	public boolean isBaseAlive(){
+		return baseAlive;
+	}
+	
+	/**
+	 * 使时间前进一帧(暂定为1/60s)
+	 */
+	public void handle(){
+		for (Tank tank:aliveTanks){
+			switch (tank.getStatus()){
+			case Tank.STATUS_BORN:
+				tank.doBorn();
+				break;
+			case Tank.STATUS_DYING:
+				tank.doDying();
+				break;
+			case Tank.STATUS_MOVING:
+				break;
+			case Tank.STATUS_READY:
+			case Tank.STATUS_DEAD:
+				//TODO 释放资源
+				break;
+			default:
+			}
+		}
 	}
 	
 	/**

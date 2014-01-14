@@ -11,7 +11,9 @@ import org.beh.jbc.Tank;
 
 import java.awt.BorderLayout;
 
-public class BattleCityApp {
+public class BattleCityApp implements Runnable {
+	public static final int FPS = 60;
+	public static final int MsPF = 1000/FPS;
 
 	private JFrame frame;
 	private BattleCityPanel panel;
@@ -50,6 +52,9 @@ public class BattleCityApp {
 		stage.addTank(tankE2,1);
 		stage.addTank(tankE4,2);
 		initialize();
+		
+		Thread thread = new Thread(this);
+		thread.start();
 	}
 
 	/**
@@ -65,6 +70,23 @@ public class BattleCityApp {
 		
 		panel = new BattleCityPanel(stage);
 		frame.getContentPane().add(panel, BorderLayout.CENTER);
+	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		int frameCounter=0;
+		while (true){
+			try {
+				Thread.sleep(MsPF);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			System.out.println(frameCounter++);
+			stage.handle();
+			panel.repaint();
+			if (frameCounter>200) break;
+		}
 	}
 
 }

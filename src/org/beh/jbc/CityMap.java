@@ -2,7 +2,6 @@ package org.beh.jbc;
 
 public class CityMap {
 	//TODO 这个类以后要变为抽象类，支持几种不同格式的外部map
-	
 	public static final byte LF_BRICK_R = 0x00;
 	public static final byte LF_BRICK_B = 0x01;
 	public static final byte LF_BRICK_L = 0x02;
@@ -92,7 +91,6 @@ public class CityMap {
 					}
 				}
 			}
-			
 		}
 	}
 	
@@ -186,7 +184,7 @@ public class CityMap {
 						result[blX][blY] = TILE_SNOW;
 						result[brX][brY] = TILE_SNOW;
 						break;
-					case 0xD:
+					case LF_NONE:
 					default:
 						result[tlX][tlY] = TILE_NONE;
 						result[trX][trY] = TILE_NONE;
@@ -194,6 +192,15 @@ public class CityMap {
 						result[brX][brY] = TILE_NONE;
 					}
 				}
+				//加上基地周围的一圈砖块
+				result[11][23]=TILE_BRICK;
+				result[12][23]=TILE_BRICK;
+				result[13][23]=TILE_BRICK;
+				result[14][23]=TILE_BRICK;
+				result[11][24]=TILE_BRICK;
+				result[14][24]=TILE_BRICK;
+				result[11][25]=TILE_BRICK;
+				result[14][25]=TILE_BRICK;
 			}
 			return result;
 		}

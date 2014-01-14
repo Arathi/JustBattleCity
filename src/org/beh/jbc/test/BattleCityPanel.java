@@ -35,6 +35,8 @@ public class BattleCityPanel extends JPanel implements IVisualStage {
 	private Color bgcNonStage;
 	private Color bgcStage;
 	private Image[][][][] tanks; //类型(type)，颜色(color)，方向(aspect)，帧(frame)
+	private Image base; //老鹰基地
+	private Image baseDestroyed; //老鹰基地损坏
 	private Image[] landform;
 	private Image[] item[];
 	private Image[] animaBorn;
@@ -82,7 +84,6 @@ public class BattleCityPanel extends JPanel implements IVisualStage {
 				for (x=0; x<4*7; x++){
 					aspect = x%4;
 					color = x/4;
-					System.out.println("x="+x+",y="+y+": color="+color);
 					tanks[type][color][aspect][frame] = imageAll.getSubimage(16*x,16*y,16,16);
 				}
 			}
@@ -96,6 +97,28 @@ public class BattleCityPanel extends JPanel implements IVisualStage {
 			landform[CityMap.TILE_WATER1]=imageAll.getSubimage(456, 8, 8, 8);
 			landform[CityMap.TILE_GRESS]=imageAll.getSubimage(464, 0, 8, 8);
 			landform[CityMap.TILE_SNOW]=imageAll.getSubimage(464, 8, 8, 8);
+			landform[CityMap.TILE_BRICK_T]=imageAll.getSubimage(480, 0, 8, 8);
+			landform[CityMap.TILE_BRICK_R]=imageAll.getSubimage(488, 0, 8, 8);
+			landform[CityMap.TILE_BRICK_L]=imageAll.getSubimage(480, 8, 8, 8);
+			landform[CityMap.TILE_BRICK_B]=imageAll.getSubimage(488, 8, 8, 8);
+			landform[CityMap.TILE_BRICK_TL]=imageAll.getSubimage(496, 0, 8, 8);
+			landform[CityMap.TILE_BRICK_TR]=imageAll.getSubimage(504, 0, 8, 8);
+			landform[CityMap.TILE_BRICK_BL]=imageAll.getSubimage(496, 8, 8, 8);
+			landform[CityMap.TILE_BRICK_BR]=imageAll.getSubimage(504, 8, 8, 8);
+			//分离出基地贴图
+			base = imageAll.getSubimage(448, 16, 16, 16);
+			baseDestroyed = imageAll.getSubimage(464, 16, 16, 16);
+			//载入出生死亡动画
+			animaBorn = new Image[4];
+			for (y=0;y<4;y++){
+				//TODO 临时位置
+				animaBorn[y]=imageAll.getSubimage(192, 192+y*16, 16, 16);
+			}
+			animaDie = new Image[3];
+			for (x=0;x<3;x++){
+				//TODO 临时位置
+				animaDie[x]=imageAll.getSubimage(192+x*16, 176, 16, 16);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -103,6 +126,49 @@ public class BattleCityPanel extends JPanel implements IVisualStage {
 	
 	public void setStage(Stage stage) {
 		this.stage=stage;
+	}
+	
+	public Image getTankImage(Tank tank){
+		int status = tank.getStatus();
+		if (status==Tank.STATUS_BORN){
+			int frame=tank.getFrame();
+			int bornFrameId=0;
+			switch (frame){
+			case 0:
+			case 6:
+				bornFrameId=0;
+				break;
+			case 1:
+			case 5:
+			case 7:
+				bornFrameId=1;
+				break;
+			case 2:
+			case 4:
+			case 8:
+				bornFrameId=2;
+				break;
+			case 3:
+			case 9:
+				bornFrameId=3;
+				break;
+			default:
+				return tanks[tank.getType()][tank.getColor()][tank.getAspect()][0];
+			}
+			return animaBorn[bornFrameId];
+		}
+		else if (status==Tank.STATUS_READY){
+			return tanks[tank.getType()][tank.getColor()][tank.getAspect()][0];
+		}
+		else if (status==Tank.STATUS_DYING){
+			int frame=tank.getFrame();
+			return animaDie[frame];
+		}
+		else if (status==Tank.STATUS_DEAD) {
+			//死掉了，就不显示了
+			return null;
+		}
+		return tanks[tank.getType()][tank.getColor()][tank.getAspect()][0];
 	}
 
 	@Override
@@ -115,12 +181,13 @@ public class BattleCityPanel extends JPanel implements IVisualStage {
 		g.fillRect(0, 0, 32*TILE_SIZE, 30*TILE_SIZE);
 		g.setColor(bgcStage);
 		g.fillRect(STAGE_AREA_X*TILE_SIZE, STAGE_AREA_Y*TILE_SIZE, 26*TILE_SIZE, 26*TILE_SIZE);
+		//绘制
 		for (y=0; y<Stage.STAGE_SIZE_Y; y++){
 			for (x=0; x<Stage.STAGE_SIZE_X; x++){
 				drawX=x*8;
 				drawY=y*8;
 				byte type = stage.getTile(x, y);
-				if (type==0) continue;
+				if (type==CityMap.TILE_NONE || type==CityMap.TILE_GRESS) continue;
 				if (landform!=null && landform[type]!=null) g.drawImage(landform[type], STAGE_AREA_X*TILE_SIZE+drawX, STAGE_AREA_Y*TILE_SIZE+drawY, this);
 				else{
 					g.setColor(fgColors[type]);
@@ -128,11 +195,34 @@ public class BattleCityPanel extends JPanel implements IVisualStage {
 				}
 			}
 		}
+		//绘制基地
+		if (stage.isBaseAlive()){
+			g.drawImage(base, STAGE_AREA_X*TILE_SIZE+12*TILE_SIZE, STAGE_AREA_Y*TILE_SIZE+24*TILE_SIZE, this);
+		}
+		else{
+			g.drawImage(baseDestroyed, STAGE_AREA_X*TILE_SIZE+12*TILE_SIZE, STAGE_AREA_Y*TILE_SIZE+24*TILE_SIZE, this);
+		}
+		//绘制坦克
 		List<Tank> aliveTanks = stage.getAliveTanks();
 		for (Tank tank : aliveTanks){
-			System.out.println("Type="+tank.getType());
-			System.out.println("Color="+tank.getColor());
-			g.drawImage(tanks[tank.getType()][tank.getColor()][tank.getAspect()][0], STAGE_AREA_X*TILE_SIZE+tank.getTileX()*TILE_SIZE, STAGE_AREA_X*TILE_SIZE+tank.getTileY()*TILE_SIZE, this);
+			Image tankImage = getTankImage(tank);
+			if (tankImage != null) {
+				g.drawImage(tankImage, STAGE_AREA_X*TILE_SIZE+tank.getTileX()*TILE_SIZE, STAGE_AREA_X*TILE_SIZE+tank.getTileY()*TILE_SIZE, this);
+			}
+		}
+		//绘制草丛（覆盖坦克层）
+		for (y=0; y<Stage.STAGE_SIZE_Y; y++){
+			for (x=0; x<Stage.STAGE_SIZE_X; x++){
+				drawX=x*8;
+				drawY=y*8;
+				byte type = stage.getTile(x, y);
+				if (type!=CityMap.TILE_GRESS) continue;
+				if (landform!=null && landform[type]!=null) g.drawImage(landform[type], STAGE_AREA_X*TILE_SIZE+drawX, STAGE_AREA_Y*TILE_SIZE+drawY, this);
+				else{
+					g.setColor(fgColors[type]);
+					g.fillRect(STAGE_AREA_X*TILE_SIZE+drawX, STAGE_AREA_Y*TILE_SIZE+drawY, 8, 8);
+				}
+			}
 		}
 	}
 

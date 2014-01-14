@@ -8,11 +8,22 @@ public class Tank extends Sprite {
 	public static final int TANK_E3=13;
 	public static final int TANK_E4=14;
 	
+	public static final int STATUS_BORN = 0;
+	public static final int STATUS_READY = 1;
+	public static final int STATUS_MOVING = 2;
+	public static final int STATUS_DYING = 8;
+	public static final int STATUS_DEAD = 9;
+	
+	public static final int DELAY_BORN = 4;
+	public static final int DELAY_DYING = 6;
+	
+	protected int status;
 	protected int type; //敌方4种，我方两种
 	protected int life; //还能被打几下（颜色不同）
 	protected int power; //0: 普通；1: 加速；2:双弹；3: 拆铁墙；4: 烧草
 	protected boolean hasItem; //显示为红色
-	protected int bornFrame; //出生状态
+	protected int frame; //动画帧数
+	protected int subFrame; //动画帧数
 	protected int invincibleLeft; //无敌剩余时间
 	protected int suspendLeft; //暂停剩余时间（我方坦克被自己人打了，时间独立计算）
 	protected boolean hasBoat; //是否可以水上移动
@@ -24,16 +35,10 @@ public class Tank extends Sprite {
 		init(id);
 	}
 	
-//	public int getType(int id){
-//		switch (id){
-//		case TANK_1P:
-//			
-//		}
-//	}
-	
 	public void init(int id){
 		size=2;
 		this.type=id;
+		status=STATUS_BORN;
 		switch (id){
 		case TANK_1P:
 			this.life=0;
@@ -112,8 +117,40 @@ public class Tank extends Sprite {
 		}
 		return color;
 	}
-
-	public int getAspect() {
-		return aspect;
+	
+	public int getStatus() {
+		return status;
+	}
+	
+	public int getFrame() {
+		// TODO Auto-generated method stub
+		return frame;
+	}
+	
+	public void doBorn(){
+		subFrame++;
+		if (subFrame>DELAY_BORN){
+			frame++;
+			subFrame=0;
+		}
+		if (frame>10){
+			frame=0;
+			status=STATUS_READY;
+		}
+	}
+	
+	public void doDying(){
+		subFrame++;
+		if (subFrame>DELAY_DYING){
+			frame++;
+			subFrame=0;
+		}
+		if (frame>3){
+			frame=0;
+			status=STATUS_DEAD;//STATUS_READY;
+		}
+	}
+	
+	public void doDead(){
 	}
 }
