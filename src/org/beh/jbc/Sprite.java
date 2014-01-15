@@ -15,6 +15,7 @@ public class Sprite {
 	protected int size; //碰撞体积
 	
 	protected int aspect; //移动方向
+	protected int speed; //移动速度
 	
 	protected int frame; //动画帧数
 	protected int subFrame; //动画帧数
@@ -37,5 +38,9 @@ public class Sprite {
 	
 	public int getAspect() {
 		return aspect;
+	}
+	
+	public int getSpeed(){
+		return speed;
 	}
 }

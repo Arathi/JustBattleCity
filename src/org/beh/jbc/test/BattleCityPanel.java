@@ -185,7 +185,6 @@ public class BattleCityPanel extends JPanel implements IVisualStage {
 
 	@Override
 	public void paint(Graphics g) {
-		// TODO Auto-generated method stub
 		super.paint(g);
 		if (stage==null) return;
 		int x, y, drawX, drawY;

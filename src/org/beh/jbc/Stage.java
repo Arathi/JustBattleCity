@@ -129,7 +129,7 @@ public class Stage {
 	 */
 	public void handle(){
 		for (Tank tank:aliveTanks){
-			tank.move(3); //强行U移动
+			tank.move(Sprite.ASPECT_DOWN); //强行移动
 			switch (tank.getStatus()){
 			case Tank.STATUS_BORN:
 				tank.doBorn();
@@ -164,10 +164,30 @@ public class Stage {
 		System.out.println(stage);
 	}
 
-	public boolean checkPoint(int nextX, int nextY, int aspect, boolean hasBoat) {
+	public int checkPoint(int sPosX, int sPosY, int aspect, boolean hasBoat) {
+		int nextX=sPosX, nextY=sPosY;
+		int originIndex = nextX+nextY*(STAGE_SIZE_X-1);
+		int nextIndex = originIndex;
+		
+		switch (aspect){
+		case Sprite.ASPECT_UP:
+			nextY=sPosY-1;
+			break;
+		case Sprite.ASPECT_RIGHT:
+			nextX=sPosX+1;
+			break;
+		case Sprite.ASPECT_DOWN:
+			nextY=sPosY+1;
+			break;
+		case Sprite.ASPECT_LEFT:
+			nextX=sPosX-1;
+			break;
+		}
+
 		//边界碰撞检测
-		if (nextX<0 || nextX>=STAGE_SIZE_X || nextY<0 || nextY>=STAGE_SIZE_Y)
-			return false;
+		if (nextX<0 || nextX>STAGE_SIZE_X-2 || nextY<0 || nextY>STAGE_SIZE_Y-2)
+			return -1;
+		
 		byte tl, tr, bl, br;
 		byte nextTileL=CityMap.TILE_NONE, nextTileR=CityMap.TILE_NONE;
 		byte ntlType, ntrType;
@@ -178,20 +198,20 @@ public class Stage {
 		br = getTile(nextX+1, nextY+1);
 		switch (aspect){
 		case Sprite.ASPECT_UP:
-			nextTileL = bl;
-			nextTileR = br;
+			nextTileL = tl;
+			nextTileR = tr;
 			break;
 		case Sprite.ASPECT_RIGHT:
-			nextTileL = tl;
-			nextTileR = bl;
+			nextTileL = tr;
+			nextTileR = br;
 			break;
 		case Sprite.ASPECT_DOWN:
-			nextTileL = tr;
-			nextTileR = tl;
+			nextTileL = br;
+			nextTileR = bl;
 			break;
 		case Sprite.ASPECT_LEFT:
-			nextTileL = br;
-			nextTileR = tr;
+			nextTileL = bl;
+			nextTileR = tl;
 			break;
 		}
 		ntlType = (byte) (nextTileL & CityMap.TILE_MASK);
@@ -207,7 +227,12 @@ public class Stage {
 			allowThrough = false;
 		}
 		//草地、空地(无条件通行)
-		return allowThrough;
+		if (allowThrough){
+			return nextX+nextY*(STAGE_SIZE_X-1);
+		}
+		else{
+			return -1;
+		}
 	}
 
 }
