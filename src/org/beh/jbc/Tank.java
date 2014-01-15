@@ -27,6 +27,7 @@ public class Tank extends Sprite {
 	protected int suspendLeft; //暂停剩余时间（我方坦克被自己人打了，时间独立计算）
 	protected boolean hasBoat; //是否可以水上移动
 	protected Stage stage; //所在战场
+	protected int speed;
 	
 	public Tank(){
 		init(TANK_1P);
@@ -39,6 +40,7 @@ public class Tank extends Sprite {
 		size=2;
 		this.type=id;
 		status=STATUS_BORN;
+		speed=1;
 		switch (id){
 		case TANK_1P:
 			this.life=0;
@@ -67,6 +69,7 @@ public class Tank extends Sprite {
 			sPosY = 0;
 			invincibleLeft=0;
 			aspect=Sprite.ASPECT_DOWN;
+			speed = 2;
 			break;
 		case TANK_E3:
 			this.life=0;
@@ -195,7 +198,7 @@ public class Tank extends Sprite {
 			nextX=sPosX-1;
 			break;
 		}
-		if (stage.checkPoint(nextX,nextY,hasBoat)){
+		if (stage.checkPoint(nextX,nextY,aspect,hasBoat)){
 			sNextX = nextX;
 			sNextY = nextY;
 		}
@@ -205,6 +208,10 @@ public class Tank extends Sprite {
 	
 	public void intoStage(Stage stage){
 		this.stage = stage;
+	}
+	
+	public int getSpeed(){
+		return speed;
 	}
 	
 }

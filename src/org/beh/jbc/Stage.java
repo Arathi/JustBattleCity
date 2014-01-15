@@ -129,7 +129,7 @@ public class Stage {
 	 */
 	public void handle(){
 		for (Tank tank:aliveTanks){
-			tank.move(0); //强行U移动
+			tank.move(3); //强行U移动
 			switch (tank.getStatus()){
 			case Tank.STATUS_BORN:
 				tank.doBorn();
@@ -161,15 +161,53 @@ public class Stage {
 		Stage stage = new Stage();
 		CityMap cmap = new CityMap();
 		stage.loadFromCityMap(cmap);
-		Tank tank=new Tank();
-		stage.addTank(tank);
 		System.out.println(stage);
 	}
 
-	public boolean checkPoint(int nextX, int nextY, boolean hasBoat) {
+	public boolean checkPoint(int nextX, int nextY, int aspect, boolean hasBoat) {
+		//边界碰撞检测
 		if (nextX<0 || nextX>=STAGE_SIZE_X || nextY<0 || nextY>=STAGE_SIZE_Y)
 			return false;
-		return true;
+		byte tl, tr, bl, br;
+		byte nextTileL=CityMap.TILE_NONE, nextTileR=CityMap.TILE_NONE;
+		byte ntlType, ntrType;
+		boolean allowThrough=true;
+		tl = getTile(nextX, nextY);
+		tr = getTile(nextX+1, nextY);
+		bl = getTile(nextX, nextY+1);
+		br = getTile(nextX+1, nextY+1);
+		switch (aspect){
+		case Sprite.ASPECT_UP:
+			nextTileL = bl;
+			nextTileR = br;
+			break;
+		case Sprite.ASPECT_RIGHT:
+			nextTileL = tl;
+			nextTileR = bl;
+			break;
+		case Sprite.ASPECT_DOWN:
+			nextTileL = tr;
+			nextTileR = tl;
+			break;
+		case Sprite.ASPECT_LEFT:
+			nextTileL = br;
+			nextTileR = tr;
+			break;
+		}
+		ntlType = (byte) (nextTileL & CityMap.TILE_MASK);
+		ntrType = (byte) (nextTileR & CityMap.TILE_MASK);
+		//墙壁碰撞检测(无条件阻止)
+		if ( ntlType==CityMap.TILE_BRICK_TYPE || ntlType==CityMap.TILE_IRON ||
+			ntrType==CityMap.TILE_BRICK_TYPE || ntrType==CityMap.TILE_IRON ){
+			allowThrough = false;
+		}
+		//水域碰撞检测(有船可通行)
+		if ( (ntlType==CityMap.TILE_WATER_TYPE || ntrType==CityMap.TILE_WATER_TYPE) &&
+			hasBoat==false ){
+			allowThrough = false;
+		}
+		//草地、空地(无条件通行)
+		return allowThrough;
 	}
 
 }

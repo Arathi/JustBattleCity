@@ -15,7 +15,7 @@ public class BattleCityApp implements Runnable {
 	public static final int FPS = 60;
 	public static final int MsPF = 1000/FPS;
 
-	private JFrame frame;
+	private JFrame frmJustBattleCity;
 	private BattleCityPanel panel;
 	private Stage stage;
 
@@ -27,7 +27,7 @@ public class BattleCityApp implements Runnable {
 			public void run() {
 				try {
 					BattleCityApp window = new BattleCityApp();
-					window.frame.setVisible(true);
+					window.frmJustBattleCity.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -47,10 +47,10 @@ public class BattleCityApp implements Runnable {
 		Tank tankE2=new Tank(Tank.TANK_E2);
 		Tank tankE4=new Tank(Tank.TANK_E4);
 		stage.addTank(tank1P,3);
-//		stage.addTank(tank2P,4);
-//		stage.addTank(tankE1,0);
-//		stage.addTank(tankE2,1);
-//		stage.addTank(tankE4,2);
+		stage.addTank(tank2P,4);
+		stage.addTank(tankE1,0);
+		stage.addTank(tankE2,1);
+		stage.addTank(tankE4,2);
 		initialize();
 		
 		Thread thread = new Thread(this);
@@ -61,15 +61,16 @@ public class BattleCityApp implements Runnable {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmJustBattleCity = new JFrame();
+		frmJustBattleCity.setTitle("Just Battle City");
+		frmJustBattleCity.setBounds(100, 100, 285, 300);
+		frmJustBattleCity.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JMenuBar menuBar = new JMenuBar();
-		frame.setJMenuBar(menuBar);
+		frmJustBattleCity.setJMenuBar(menuBar);
 		
 		panel = new BattleCityPanel(stage);
-		frame.getContentPane().add(panel, BorderLayout.CENTER);
+		frmJustBattleCity.getContentPane().add(panel, BorderLayout.CENTER);
 	}
 
 	@Override

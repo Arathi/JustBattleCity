@@ -21,20 +21,23 @@ public class CityMap {
 	public static final byte LF_NONE = 0x0D;
 	
 	public static final byte TILE_NONE = 0x00;
-	public static final byte TILE_BRICK = 0x10;    //00010000
-	public static final byte TILE_BRICK_R = 0x14;  //00010100
-	public static final byte TILE_BRICK_B = 0x15;  //00010101
-	public static final byte TILE_BRICK_L = 0x16;  //00010110
-	public static final byte TILE_BRICK_T = 0x17;  //00010111
-	public static final byte TILE_BRICK_TR = 0x18; //00011000
-	public static final byte TILE_BRICK_BR = 0x19; //00011001
-	public static final byte TILE_BRICK_BL = 0x1A; //00011010
-	public static final byte TILE_BRICK_TL = 0x1B; //00011011
+	public static final byte TILE_BRICK_TYPE = 0x10; //00010000
+	public static final byte TILE_BRICK = 0x1F;      //00011111
+	public static final byte TILE_BRICK_R = 0x15;    //00010101
+	public static final byte TILE_BRICK_B = 0x13;    //00010011
+	public static final byte TILE_BRICK_L = 0x1A;    //00011010
+	public static final byte TILE_BRICK_T = 0x1C;    //00011100
+	public static final byte TILE_BRICK_TR = 0x12;   //00010010
+	public static final byte TILE_BRICK_BR = 0x11;   //00010001
+	public static final byte TILE_BRICK_BL = 0x14;   //00010100
+	public static final byte TILE_BRICK_TL = 0x18;   //00011000
 	public static final byte TILE_IRON = 0x20;
-	public static final byte TILE_WATER0 = 0x30;
-	public static final byte TILE_WATER1 = 0x31;
+	public static final byte TILE_WATER_TYPE = 0x30;
+	public static final byte TILE_WATER0 = 0x31;  //00110001
+	public static final byte TILE_WATER1 = 0x32;  //00110010
 	public static final byte TILE_GRESS = 0x40;
 	public static final byte TILE_SNOW = 0x50;
+	public static final byte TILE_MASK = (byte) 0xF0; //TileÑÚÂë
 	
 	protected int version; //µØÍ¼°æ±¾
 	protected byte[] mapdata;

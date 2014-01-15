@@ -16,10 +16,6 @@ import org.beh.jbc.Stage;
 import org.beh.jbc.Tank;
 
 public class BattleCityPanel extends JPanel implements IVisualStage {
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 122396563446556939L;
 	
 	public static final int STAGE_AREA_X = 2;
@@ -39,7 +35,7 @@ public class BattleCityPanel extends JPanel implements IVisualStage {
 	private Image base; //老鹰基地
 	private Image baseDestroyed; //老鹰基地损坏
 	private Image[] landform;
-	private Image[] item[];
+	private Image[] imgItem;
 	private Image[] animaBorn;
 	private Image[] animaDie;
 	private Image[] imgBoat;
@@ -89,6 +85,14 @@ public class BattleCityPanel extends JPanel implements IVisualStage {
 					tanks[type][color][aspect][frame] = imageAll.getSubimage(16*x,16*y,16,16);
 				}
 			}
+			imgBoat = new Image[2];
+			imgBoat[0] = imageAll.getSubimage(480, 16, 16, 16);
+			imgBoat[1] = imageAll.getSubimage(496, 16, 16, 16);
+			//载入物品Tile
+			imgItem = new Image[8];
+			for (x=0; x<8; x++){
+				imgItem[x] = imageAll.getSubimage(128+x*16, 128, 16, 16);
+			}
 			//分离出字库
 			
 			//分离出地表贴图
@@ -121,9 +125,6 @@ public class BattleCityPanel extends JPanel implements IVisualStage {
 				//TODO 临时位置
 				animaDie[x]=imageAll.getSubimage(192+x*16, 176, 16, 16);
 			}
-			imgBoat = new Image[2];
-			imgBoat[0] = imageAll.getSubimage(480, 16, 16, 16);
-			imgBoat[1] = imageAll.getSubimage(496, 16, 16, 16);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -219,10 +220,10 @@ public class BattleCityPanel extends JPanel implements IVisualStage {
 			Image tankImage = getTankImage(tank);
 			if (tankImage != null) {
 				int pid = tank.getColor();
-				//int  distanceX = Math.abs(tank.getNextX()-tank.getTileX()) * TILE_SIZE,
-				//	 distanceY = Math.abs(tank.getNextY()-tank.getTileY()) * TILE_SIZE;
+				int  distanceX = Math.abs(tank.getNextX()-tank.getTileX()) * TILE_SIZE,
+					 distanceY = Math.abs(tank.getNextY()-tank.getTileY()) * TILE_SIZE;
 				int offsetX=0, offsetY=0;
-				if (tank.getStatus()==Tank.STATUS_MOVING){
+				if (tank.getStatus()==Tank.STATUS_MOVING && ( distanceX!=0 || distanceY!=0 ) ){
 					switch (tank.getAspect()){
 					case Sprite.ASPECT_UP:
 						offsetY = -1*tank.getFrame();
