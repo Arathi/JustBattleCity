@@ -47,10 +47,10 @@ public class BattleCityApp implements Runnable {
 		Tank tankE2=new Tank(Tank.TANK_E2);
 		Tank tankE4=new Tank(Tank.TANK_E4);
 		stage.addTank(tank1P,3);
-//		stage.addTank(tank2P,4);
-//		stage.addTank(tankE1,0);
-//		stage.addTank(tankE2,1);
-//		stage.addTank(tankE4,2);
+		stage.addTank(tank2P,4);
+		stage.addTank(tankE1,0);
+		stage.addTank(tankE2,1);
+		stage.addTank(tankE4,2);
 		initialize();
 		
 		Thread thread = new Thread(this);

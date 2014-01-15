@@ -27,6 +27,8 @@ public class Tank extends Sprite {
 	protected int suspendLeft; //暂停剩余时间（我方坦克被自己人打了，时间独立计算）
 	protected boolean hasBoat; //是否可以水上移动
 	protected Stage stage; //所在战场
+	protected boolean fireBuffer; //开火命令缓存
+	protected int bulletCounter;
 	
 	public Tank(){
 		init(TANK_1P);
@@ -186,15 +188,36 @@ public class Tank extends Sprite {
 		//如果前方无路可走，那么返回失败
 		int nextIndex = stage.checkPoint(sPosX,sPosY,aspect,hasBoat);
 		if ( nextIndex>=0 ){
-			sNextX = nextIndex%(Stage.STAGE_SIZE_X-1);
-			sNextY = nextIndex/(Stage.STAGE_SIZE_X-1);
+			sNextX = stage.convetIndex2X(nextIndex);//nextIndex%(Stage.STAGE_SIZE_X-1);
+			sNextY = stage.convetIndex2Y(nextIndex);//nextIndex/(Stage.STAGE_SIZE_X-1);
 		}
 		status=STATUS_MOVING;
 		return true;
 	}
 	
-	public void intoStage(Stage stage){
+	public boolean fire(){
+		if (!fireBuffer) return false;
+		//检查当前是否允许开火
+		//检查是否被暂停
+		//检查当前已发出子弹数量
+		Bullet bullet = new Bullet(this);
+		
+		return true;
+	}
+	
+	public void prepareFire(){
+		fireBuffer = true;
+		
+	}
+	
+	public void intoStage(Stage stage, int x, int y, int a){
 		this.stage = stage;
+		sPosX=sNextX=x;
+		sPosY=sNextY=y;
+		aspect=a;
+	}
+	public Stage getStage() {
+		return stage;
 	}
 	
 }

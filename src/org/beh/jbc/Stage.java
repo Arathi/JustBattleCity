@@ -89,35 +89,51 @@ public class Stage {
 	}
 	
 	public void addTank(Tank tank, int startPoint){
+		int x=0, y=0, a=Sprite.ASPECT_UP;
 		switch (startPoint){
 		case 0:
-			tank.sPosX=0;
-			tank.sPosY=0;
-			tank.aspect=Sprite.ASPECT_DOWN;
+			x=0;
+			y=0;
+			a=Sprite.ASPECT_DOWN;
+//			tank.sPosX=0;
+//			tank.sPosY=0;
+//			tank.aspect=Sprite.ASPECT_DOWN;
 			break;
 		case 1:
-			tank.sPosX=12;
-			tank.sPosY=0;
-			tank.aspect=Sprite.ASPECT_DOWN;
+			x=12;
+			y=0;
+			a=Sprite.ASPECT_DOWN;
+//			tank.sPosX=12;
+//			tank.sPosY=0;
+//			tank.aspect=Sprite.ASPECT_DOWN;
 			break;
 		case 2:
-			tank.sPosX=24;
-			tank.sPosY=0;
-			tank.aspect=Sprite.ASPECT_DOWN;
+			x=24;
+			y=0;
+			a=Sprite.ASPECT_DOWN;
+//			tank.sPosX=24;
+//			tank.sPosY=0;
+//			tank.aspect=Sprite.ASPECT_DOWN;
 			break;
 		case 3:
-			tank.sPosX=8;
-			tank.sPosY=24;
-			tank.aspect=Sprite.ASPECT_UP;
+			x=8;
+			y=24;
+			a=Sprite.ASPECT_DOWN;
+//			tank.sPosX=8;
+//			tank.sPosY=24;
+//			tank.aspect=Sprite.ASPECT_UP;
 			break;
 		case 4:
-			tank.sPosX=16;
-			tank.sPosY=24;
-			tank.aspect=Sprite.ASPECT_UP;
+			x=16;
+			y=24;
+			a=Sprite.ASPECT_DOWN;
+//			tank.sPosX=16;
+//			tank.sPosY=24;
+//			tank.aspect=Sprite.ASPECT_UP;
 			break;
 		}
 		aliveTanks.add(tank);
-		tank.intoStage(this);
+		tank.intoStage(this, x, y, a);
 	}
 	
 	public boolean isBaseAlive(){
@@ -129,7 +145,9 @@ public class Stage {
 	 */
 	public void handle(){
 		for (Tank tank:aliveTanks){
-			tank.move(Sprite.ASPECT_DOWN); //强行移动
+			//TODO 引入控制，移除强行移动与开火
+			tank.move(Sprite.ASPECT_UP); //强行移动
+			tank.fire(); //强行开火
 			switch (tank.getStatus()){
 			case Tank.STATUS_BORN:
 				tank.doBorn();
@@ -163,12 +181,19 @@ public class Stage {
 		stage.loadFromCityMap(cmap);
 		System.out.println(stage);
 	}
-
-	public int checkPoint(int sPosX, int sPosY, int aspect, boolean hasBoat) {
+	
+	public int convetXY2Index(int x, int y){
+		return x+y*(STAGE_SIZE_X+1);
+	}
+	public int convetIndex2X(int index){
+		return index%(STAGE_SIZE_X+1);
+	}
+	public int convetIndex2Y(int index){
+		return index/(STAGE_SIZE_X+1);
+	}
+	
+	public int getNextIndex(int sPosX, int sPosY, int aspect){
 		int nextX=sPosX, nextY=sPosY;
-		int originIndex = nextX+nextY*(STAGE_SIZE_X-1);
-		int nextIndex = originIndex;
-		
 		switch (aspect){
 		case Sprite.ASPECT_UP:
 			nextY=sPosY-1;
@@ -183,10 +208,20 @@ public class Stage {
 			nextX=sPosX-1;
 			break;
 		}
-
-		//边界碰撞检测
+		//非法精灵坐标
 		if (nextX<0 || nextX>STAGE_SIZE_X-2 || nextY<0 || nextY>STAGE_SIZE_Y-2)
 			return -1;
+		return convetXY2Index(nextX, nextY);
+	}
+
+	public int checkPoint(int sPosX, int sPosY, int aspect, boolean hasBoat) {
+		int nextX=sPosX, nextY=sPosY;
+		int nextIndex = getNextIndex(sPosX, sPosY, aspect);
+		//边界碰撞检测
+		if (nextIndex<0)
+			return -1;
+		nextX = convetIndex2X(nextIndex);//nextIndex%(STAGE_SIZE_X-1);
+		nextY = convetIndex2Y(nextIndex);//nextIndex/(STAGE_SIZE_X-1);
 		
 		byte tl, tr, bl, br;
 		byte nextTileL=CityMap.TILE_NONE, nextTileR=CityMap.TILE_NONE;
@@ -228,7 +263,7 @@ public class Stage {
 		}
 		//草地、空地(无条件通行)
 		if (allowThrough){
-			return nextX+nextY*(STAGE_SIZE_X-1);
+			return nextIndex;//convetXY2Index(nextX, nextY); //nextX+nextY*(STAGE_SIZE_X-1);
 		}
 		else{
 			return -1;

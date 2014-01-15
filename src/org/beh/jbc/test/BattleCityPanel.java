@@ -14,6 +14,8 @@ import org.beh.jbc.IVisualStage;
 import org.beh.jbc.Sprite;
 import org.beh.jbc.Stage;
 import org.beh.jbc.Tank;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class BattleCityPanel extends JPanel implements IVisualStage {
 	private static final long serialVersionUID = 122396563446556939L;
@@ -44,6 +46,30 @@ public class BattleCityPanel extends JPanel implements IVisualStage {
 	 * Create the panel.
 	 */
 	public BattleCityPanel() {
+		addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				char key = e.getKeyChar();
+				switch (key){
+				case 'w':
+				case 'W':
+					
+					break;
+				case 'a':
+				case 'A':
+					break;
+				case 's':
+				case 'S':
+					break;
+				case 'd':
+				case 'D':
+					break;
+				case 'h':
+				case 'H':
+					break;
+				}
+			}
+		});
 		init();
 	}
 	public BattleCityPanel(Stage stage){
