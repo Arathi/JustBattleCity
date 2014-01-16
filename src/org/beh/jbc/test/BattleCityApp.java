@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 
+import org.beh.jbc.BattleCity;
 import org.beh.jbc.CityMap;
 import org.beh.jbc.Stage;
 import org.beh.jbc.Tank;
@@ -18,6 +19,7 @@ public class BattleCityApp implements Runnable {
 	private JFrame frmJustBattleCity;
 	private BattleCityPanel panel;
 	private Stage stage;
+	private BattleCity game;
 
 	/**
 	 * Launch the application.
@@ -39,18 +41,8 @@ public class BattleCityApp implements Runnable {
 	 * Create the application.
 	 */
 	public BattleCityApp() {
-		stage = new Stage();
-		stage.loadFromCityMap(new CityMap());
-		Tank tank1P=new Tank(Tank.TANK_1P);
-		Tank tank2P=new Tank(Tank.TANK_2P);
-		Tank tankE1=new Tank(Tank.TANK_E1);
-		Tank tankE2=new Tank(Tank.TANK_E2);
-		Tank tankE4=new Tank(Tank.TANK_E4);
-		stage.addTank(tank1P,3);
-		stage.addTank(tank2P,4);
-		stage.addTank(tankE1,0);
-		stage.addTank(tankE2,1);
-		stage.addTank(tankE4,2);
+		game = new BattleCity(BattleCity.PLAYER_MODE_BOTH);
+		stage = game.getCurStage();
 		initialize();
 		
 		Thread thread = new Thread(this);
@@ -71,6 +63,8 @@ public class BattleCityApp implements Runnable {
 		
 		panel = new BattleCityPanel(stage);
 		frmJustBattleCity.getContentPane().add(panel, BorderLayout.CENTER);
+		
+		frmJustBattleCity.addKeyListener(panel);
 	}
 
 	@Override
@@ -82,10 +76,10 @@ public class BattleCityApp implements Runnable {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			System.out.println(frameCounter++);
+			//System.out.println(frameCounter++);
 			stage.handle();
 			panel.repaint();
-			if (frameCounter>500) break;
+			//if (frameCounter>500) break;
 		}
 	}
 

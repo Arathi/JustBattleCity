@@ -9,15 +9,18 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
+import org.beh.jbc.Bullet;
 import org.beh.jbc.CityMap;
 import org.beh.jbc.IVisualStage;
 import org.beh.jbc.Sprite;
 import org.beh.jbc.Stage;
 import org.beh.jbc.Tank;
+
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
-public class BattleCityPanel extends JPanel implements IVisualStage {
+public class BattleCityPanel extends JPanel implements IVisualStage, KeyListener {
 	private static final long serialVersionUID = 122396563446556939L;
 	
 	public static final int STAGE_AREA_X = 2;
@@ -41,35 +44,13 @@ public class BattleCityPanel extends JPanel implements IVisualStage {
 	private Image[] animaBorn;
 	private Image[] animaDie;
 	private Image[] imgBoat;
+//	private Tank tankP1;
+//	private Tank tankP2;
 	
 	/**
 	 * Create the panel.
 	 */
 	public BattleCityPanel() {
-		addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyReleased(KeyEvent e) {
-				char key = e.getKeyChar();
-				switch (key){
-				case 'w':
-				case 'W':
-					
-					break;
-				case 'a':
-				case 'A':
-					break;
-				case 's':
-				case 'S':
-					break;
-				case 'd':
-				case 'D':
-					break;
-				case 'h':
-				case 'H':
-					break;
-				}
-			}
-		});
 		init();
 	}
 	public BattleCityPanel(Stage stage){
@@ -218,7 +199,8 @@ public class BattleCityPanel extends JPanel implements IVisualStage {
 		g.fillRect(0, 0, 32*TILE_SIZE, 30*TILE_SIZE);
 		g.setColor(bgcStage);
 		g.fillRect(STAGE_AREA_X*TILE_SIZE, STAGE_AREA_Y*TILE_SIZE, 26*TILE_SIZE, 26*TILE_SIZE);
-		//绘制
+		
+		//绘制地表（除了草地）
 		for (y=0; y<Stage.STAGE_SIZE_Y; y++){
 			for (x=0; x<Stage.STAGE_SIZE_X; x++){
 				drawX=x*8;
@@ -239,6 +221,14 @@ public class BattleCityPanel extends JPanel implements IVisualStage {
 		else{
 			g.drawImage(baseDestroyed, STAGE_AREA_X*TILE_SIZE+12*TILE_SIZE, STAGE_AREA_Y*TILE_SIZE+24*TILE_SIZE, this);
 		}
+		
+		//绘制子弹
+		List<Bullet> bullets = stage.getBullets();
+		g.setColor(Color.GRAY);
+		for (Bullet bullet : bullets){
+			g.fillRect(bullet.getTileX()-1, bullet.getTileY()-1, 3, 3);
+		}
+		
 		//绘制坦克
 		List<Tank> aliveTanks = stage.getAliveTanks();
 		for (Tank tank : aliveTanks){
@@ -280,6 +270,7 @@ public class BattleCityPanel extends JPanel implements IVisualStage {
 				);
 			}
 		}
+		
 		//绘制草丛（覆盖坦克层）
 		for (y=0; y<Stage.STAGE_SIZE_Y; y++){
 			for (x=0; x<Stage.STAGE_SIZE_X; x++){
@@ -293,6 +284,67 @@ public class BattleCityPanel extends JPanel implements IVisualStage {
 					g.fillRect(STAGE_AREA_X*TILE_SIZE+drawX, STAGE_AREA_Y*TILE_SIZE+drawY, 8, 8);
 				}
 			}
+		}
+
+		//绘制幕布(最顶层)
+		g.setColor(bgcNonStage);
+		if (stage.getStatus()==Stage.STATUS_STARTING){
+			int frame = stage.getCurtainFrame();
+			int mask = 13-frame;
+			g.fillRect(
+				STAGE_AREA_X*TILE_SIZE, 
+				STAGE_AREA_Y*TILE_SIZE, 
+				26*TILE_SIZE, 
+				mask*TILE_SIZE
+			);
+			g.fillRect(
+				STAGE_AREA_X*TILE_SIZE, 
+				(STAGE_AREA_Y+26-mask)*TILE_SIZE, 
+				26*TILE_SIZE,
+				mask*TILE_SIZE
+			);
+		}
+		if (stage.getStatus()==Stage.STATUS_ENDING){
+			
+		}
+	}
+	@Override
+	public void keyPressed(KeyEvent e) { }
+	@Override
+	public void keyReleased(KeyEvent e) { }
+	
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		Tank tankP1, tankP2;
+		tankP1 = stage.getPlayer1sTank();
+		tankP2 = stage.getPlayer2sTank();
+		char key = e.getKeyChar();
+		switch (key){
+		case 'w':
+		case 'W':
+			System.out.println("w");
+			if (tankP1!=null) tankP1.move(Sprite.ASPECT_UP);
+			break;
+		case 'a':
+		case 'A':
+			System.out.println("a");
+			if (tankP1!=null) tankP1.move(Sprite.ASPECT_LEFT);
+			break;
+		case 's':
+		case 'S':
+			System.out.println("s");
+			if (tankP1!=null) tankP1.move(Sprite.ASPECT_DOWN);
+			break;
+		case 'd':
+		case 'D':
+			System.out.println("d");
+			if (tankP1!=null) tankP1.move(Sprite.ASPECT_RIGHT);
+			break;
+		case 'h':
+		case 'H':
+			if (tankP1!=null) tankP1.prepareFire();
+			break;
 		}
 	}
 

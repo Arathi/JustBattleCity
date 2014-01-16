@@ -586,13 +586,25 @@ public class CityMap {
 	public CityMap(){
 		init();
 	}
+	public CityMap(int stageId){
+		init(stageId);
+	}
 	
+	@Deprecated
 	public void init(){
 		xSize = 13;
 		ySize = 13;
 		mapdata = new byte[xSize*ySize];
 		//载入默认数据
-		loadFromROM(35);
+		loadFromROM(1);
+	}
+	
+	public void init(int stageId){
+		xSize = 13;
+		ySize = 13;
+		mapdata = new byte[xSize*ySize];
+		//载入默认数据
+		loadFromROM(stageId);	
 	}
 	
 	public void loadFromROM(int stageId){
