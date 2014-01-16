@@ -6,11 +6,10 @@ import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 
 import org.beh.jbc.BattleCity;
-import org.beh.jbc.CityMap;
 import org.beh.jbc.Stage;
-import org.beh.jbc.Tank;
 
 import java.awt.BorderLayout;
+import java.awt.Window.Type;
 
 public class BattleCityApp implements Runnable {
 	public static final int FPS = 60;
@@ -55,7 +54,7 @@ public class BattleCityApp implements Runnable {
 	private void initialize() {
 		frmJustBattleCity = new JFrame();
 		frmJustBattleCity.setTitle("Just Battle City");
-		frmJustBattleCity.setBounds(100, 100, 285, 300);
+		frmJustBattleCity.setBounds(100, 100, 256+17, 240+42);
 		frmJustBattleCity.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JMenuBar menuBar = new JMenuBar();
@@ -65,11 +64,12 @@ public class BattleCityApp implements Runnable {
 		frmJustBattleCity.getContentPane().add(panel, BorderLayout.CENTER);
 		
 		frmJustBattleCity.addKeyListener(panel);
+		frmJustBattleCity.enableInputMethods(false);
 	}
 
 	@Override
 	public void run() {
-		int frameCounter=0;
+		//int frameCounter=0;
 		while (true){
 			try {
 				Thread.sleep(MsPF);

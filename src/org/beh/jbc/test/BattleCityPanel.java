@@ -16,7 +16,6 @@ import org.beh.jbc.Sprite;
 import org.beh.jbc.Stage;
 import org.beh.jbc.Tank;
 
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -190,7 +189,6 @@ public class BattleCityPanel extends JPanel implements IVisualStage, KeyListener
 		return tanks[tank.getType()][tank.getColor()][tank.getAspect()][0];
 	}
 
-	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
 		if (stage==null) return;
@@ -309,43 +307,48 @@ public class BattleCityPanel extends JPanel implements IVisualStage, KeyListener
 		}
 	}
 	@Override
-	public void keyPressed(KeyEvent e) { }
-	@Override
-	public void keyReleased(KeyEvent e) { }
-	
-	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
+	public void keyPressed(KeyEvent e) {
 		Tank tankP1, tankP2;
 		tankP1 = stage.getPlayer1sTank();
 		tankP2 = stage.getPlayer2sTank();
-		char key = e.getKeyChar();
-		switch (key){
-		case 'w':
-		case 'W':
-			System.out.println("w");
+		int keyCode = e.getKeyCode();
+		switch (keyCode){
+		case KeyEvent.VK_W:
 			if (tankP1!=null) tankP1.move(Sprite.ASPECT_UP);
 			break;
-		case 'a':
-		case 'A':
-			System.out.println("a");
+		case KeyEvent.VK_A:
 			if (tankP1!=null) tankP1.move(Sprite.ASPECT_LEFT);
 			break;
-		case 's':
-		case 'S':
-			System.out.println("s");
+		case KeyEvent.VK_S:
 			if (tankP1!=null) tankP1.move(Sprite.ASPECT_DOWN);
 			break;
-		case 'd':
-		case 'D':
-			System.out.println("d");
+		case KeyEvent.VK_D:
 			if (tankP1!=null) tankP1.move(Sprite.ASPECT_RIGHT);
 			break;
-		case 'h':
-		case 'H':
+		case KeyEvent.VK_H:
 			if (tankP1!=null) tankP1.prepareFire();
+			break;
+		case KeyEvent.VK_UP:
+			if (tankP2!=null) tankP2.move(Sprite.ASPECT_UP);
+			break;
+		case KeyEvent.VK_LEFT:
+			if (tankP2!=null) tankP2.move(Sprite.ASPECT_LEFT);
+			break;
+		case KeyEvent.VK_DOWN:
+			if (tankP2!=null) tankP2.move(Sprite.ASPECT_DOWN);
+			break;
+		case KeyEvent.VK_RIGHT:
+			if (tankP2!=null) tankP2.move(Sprite.ASPECT_RIGHT);
+			break;
+		case KeyEvent.VK_SHIFT:
+			if (tankP2!=null) tankP2.prepareFire();
 			break;
 		}
 	}
+	
+	@Override
+	public void keyReleased(KeyEvent e) { }
+	@Override
+	public void keyTyped(KeyEvent e) { }
 
 }
